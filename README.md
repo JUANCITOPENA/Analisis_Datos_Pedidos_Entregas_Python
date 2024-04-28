@@ -43,34 +43,51 @@ streamlit run Dashboard.py
 
 ## 📊 Diseño del Dashboard 📊
 
-El dashboard consta de varias secciones y gráficos para analizar datos de pedidos y entregas:
+El dashboard está compuesto por varias secciones y gráficos para el análisis de datos de pedidos y entregas:
 
-Gráficos de Barra: Visualiza los ingresos por cliente, vendedor, distribuidor y producto.
-Gráfico Circular por Estado: Muestra la distribución por estado con colores personalizados (verde para "Entrega Exacta", amarillo para "Dentro del Rango de 30 Metros", y rojo para "Fuera del Rango de 30 Metros").
-Gráfico de Líneas por Fechas: Analiza el ingreso total a lo largo del tiempo.
-Mapa de Geolocalización: Muestra la ubicación de los clientes y las entregas, con colores según el estado de la entrega.
-🏷️ Licencia 🏷️
-Este proyecto está licenciado bajo la Licencia MIT. Puedes usar, copiar, modificar y distribuir el código con libertad, siempre que mantengas esta licencia.
+- **Gráficos de Barra**: Visualiza los ingresos por cliente, vendedor, distribuidor y producto. Estos gráficos proporcionan información clara y comparativa.
+- **Gráfico Circular por Estado**: Muestra la distribución por estado con colores personalizados: 
+  - Verde para "Entrega Exacta".
+  - Amarillo para "Dentro del Rango de 30 Metros".
+  - Rojo para "Fuera del Rango de 30 Metros".
+- **Gráfico de Líneas por Fechas**: Analiza el ingreso total a lo largo del tiempo, permitiendo identificar tendencias.
+- **Mapa de Geolocalización**: Muestra la ubicación de los clientes y las entregas. Los puntos del mapa están coloreados según el estado de la entrega.
 
-⭐ Contribuciones y Soporte ⭐
-Contribuciones al proyecto son bienvenidas. Si encuentras errores, tienes ideas de mejora, o deseas contribuir, no dudes en abrir un issue o un pull request en GitHub. Recuerda dar estrella al repositorio si te parece útil, y compartirlo con otros.
+---
 
-📣 Sígueme en Redes Sociales 📣
-Si te gustó este proyecto, te invito a seguirme en:
+## 🏷️ Licencia 🏷️
 
-YouTube
-GitHub
-LinkedIn
-Blog
+Este proyecto está licenciado bajo la Licencia MIT. Puedes usar, copiar, modificar y distribuir el código con libertad, siempre que mantengas esta licencia y des el crédito correspondiente.
 
-🚀 Ejecución del Dashboard 🚀
+---
+
+## ⭐ Contribuciones y Soporte ⭐
+
+Las contribuciones al proyecto son bienvenidas. Si encuentras errores, tienes ideas para mejorar, o deseas contribuir, no dudes en abrir un issue o un pull request en GitHub. Recuerda dar una estrella al repositorio si te resulta útil y compartirlo con otros.
+
+---
+
+## 📣 Sígueme en Redes Sociales 📣
+
+Si te gustó este proyecto, te invito a seguirme en estas plataformas:
+
+- [YouTube](#) 
+- [GitHub](#)
+- [LinkedIn](#)
+- [Blog](#)
+
+---
+
+## 🚀 Ejecución del Dashboard 🚀
+
 Para ejecutar el dashboard, sigue estos pasos:
 
-Abre una terminal o consola en la carpeta donde clonaste el repositorio.
-Activa tu entorno virtual.
-Ejecuta el comando: streamlit run Dashboard.py.
-Abre tu navegador para ver el dashboard en acción.
+1. Abre una terminal o consola en la carpeta donde clonaste el repositorio.
+2. Activa tu entorno virtual.
+3. Ejecuta el comando: `streamlit run Dashboard.py`.
+4. Abre tu navegador para ver el dashboard en acción.
+
+---
 
 Esperamos que este proyecto te sea útil para comprender mejor el análisis de datos de pedidos y entregas. Gracias por tu interés, y no dudes en contribuir y compartir el proyecto. 🚀
 
-Este README está diseñado para ser completo y explicativo, proporcionando t
