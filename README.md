@@ -85,6 +85,15 @@ El dashboard está compuesto por varias secciones y gráficos para el análisis 
 
 ---
 
+## 📊 Capturas:
+---
+![](FONDO1.png)
+
+![](FONDO1.png)
+
+![](FONDO1.png)
+
+
 ## 🏷️ Licencia 🏷️
 
 Este proyecto está licenciado bajo la Licencia MIT. Puedes usar, copiar, modificar y distribuir el código con libertad, siempre que mantengas esta licencia y des el crédito correspondiente.
