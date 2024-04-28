@@ -9,6 +9,36 @@ En muchas empresas, los procesos de pedidos y entregas son fundamentales para el
 ## 💡 Solución 💡
 Para abordar estos problemas, hemos desarrollado un dashboard interactivo que permite analizar datos de pedidos y entregas de manera visual y dinámica. Con este dashboard, puedes aplicar filtros, visualizar gráficos, y obtener información relevante para tomar decisiones informadas y mejorar la eficiencia operativa.
 
+## 📊 Recursos utilizados como datos📊
+
+Para el análisis de datos de pedidos y entregas, utilizamos un archivo Excel llamado `Vista_Detalles_Pedidos_V1.xlsx`. Este dataset es una vista generada a partir de una base de datos que contiene información detallada sobre pedidos, clientes, productos, vendedores, y más.
+
+Los datos contenidos en el archivo Excel incluyen las siguientes columnas:
+
+- **NoPedido**: Número de identificación del pedido.
+- **Fecha Pedido**: Fecha en que se realizó el pedido.
+- **Vendedor**: Nombre del vendedor responsable del pedido.
+- **Teléfono Vendedor**: Número de contacto del vendedor.
+- **Cliente**: Nombre del cliente que realizó el pedido.
+- **Teléfono Cliente**: Número de contacto del cliente.
+- **Ciudad**: Ciudad o localidad del cliente.
+- **Latitud_Cliente y Longitud_Cliente**: Coordenadas geográficas del cliente.
+- **Distribuidor**: Nombre del distribuidor a cargo de la entrega.
+- **Producto**: Descripción del producto pedido.
+- **Fecha Depacho**: Fecha de despacho o entrega del pedido.
+- **Latitud_Despacho y Longitud_Despacho**: Coordenadas geográficas de donde se hizo la entrega.
+- **Teléfono Distribuidor**: Número de contacto del distribuidor.
+- **Distancia Metros**: Distancia entre el cliente y el punto de entrega.
+- **Estado**: Estado de la entrega (por ejemplo, "Entrega Exacta en Lugar", "Dentro del Rango de 30 Metros", "Fuera del Rango de 30 Metros").
+- **Total de Pedidos**: Cantidad total de pedidos realizados.
+- **Cantidad Vendida**: Cantidad de productos vendidos en el pedido.
+- **Costo Total**: Costo total de los productos vendidos.
+- **Ingreso Total**: Ingresos generados por los pedidos.
+- **Diferencia**: Diferencia entre el costo total y el ingreso total.
+- **Margen y % Margen**: Margen bruto y porcentaje de margen en relación con los ingresos.
+
+---
+
 ## 🛠️ Tecnologías Utilizadas 🛠️
 Para construir este dashboard, utilizamos las siguientes tecnologías y herramientas:
 - **Python**: Lenguaje de programación principal.
