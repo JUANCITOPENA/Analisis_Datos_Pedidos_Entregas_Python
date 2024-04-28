@@ -89,9 +89,9 @@ El dashboard está compuesto por varias secciones y gráficos para el análisis 
 ---
 ![](FONDO1.png)
 
-![](FONDO1.png)
+![](FONDO2.png)
 
-![](FONDO1.png)
+![](FONDO3.png)
 
 
 ## 🏷️ Licencia 🏷️
