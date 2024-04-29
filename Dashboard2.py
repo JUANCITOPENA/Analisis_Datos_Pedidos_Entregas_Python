@@ -47,49 +47,73 @@ st.set_page_config(layout="wide")
 df = pd.read_excel('Vista_Detalles_Pedidos_V1.xlsx')
 
 
-# Estilo CSS para tarjetas con bordes redondeados, borde verde y sombra
+# Inyectar CSS para tarjetas con altura y ancho consistentes
 st.markdown(
     """
     <style>
-    .card {
+    
+      
+    .card_kpi {
         background: white;  /* Fondo blanco */
         border-radius: 15px;  /* Bordes redondeados */
-        border: 2px solid limegreen;  /* Borde verde fluorescente */
-        box-shadow: 2px 2px 12px rgba(0, 255, 0, 0.2);  /* Sombra con tono verde */
-        padding: 20px;  /* Espacio interno */
+        border: 2px solid limegreen;  /* Borde verde */
+        box-shadow: 2px 2px 12px rgba(0, 255, 0, 0.2);  /* Sombra sutil */
+        padding: 15px;  /* Espacio interno */
         text-align: center;  /* Texto centrado */
-        margin: 10px;  /* Espacio externo */
-        color:black;
-        font-size: 19px; /* Tamaño de la letra */
-        font-weight: bold; /* Letra negrita */
-        color: darkblue; /* Color de la letra */
-        transition: all 0.3s ease; /* Transición suave para los cambios de estilo */
-        animation: latido 1s infinite; /* Aplica la animación de latido al pasar el cursor */
-    }
-    
-    /* Mayor especificidad usando una jerarquía de selectores */
-    .container .section .card:hover {
-        background-color: darkslategray; /* Fondo más oscuro al pasar el cursor */
-        color: white; /* Texto blanco al pasar el cursor */
-        transform: scale(1.05); /* Aumentar ligeramente el tamaño al pasar el cursor */
-        box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3); /* Mayor sombra para el efecto de elevación */
+        margin: 5px;  /* Reducir el espacio entre tarjetas */
+        font-weight: bold;  /* Texto en negrita */
+        color: darkblue;  /* Color del texto */
+        transition: all 0.3s ease;  /* Transición suave */
+        animation: latido 1s infinite;  /* Animación de latido */
+        padding-bottom: 15px;  /* Espacio interno solo para abajo */
+        flex: 1;  /* Asegurar que todas las tarjetas crezcan por igual */
+        height: 90px;  /* Altura fija para mantener consistencia */
     }
 
+    .card_kpi p {
+        margin: 0;  /* Eliminar margen para evitar desbordamiento */
+        overflow: hidden;  /* Evitar desbordamiento del texto */
+        text-overflow: ellipsis;  /* Usar puntos suspensivos si el texto es muy largo */
+        white-space: normal;  /* Permitir que el texto se ajuste a múltiples líneas */
+        font-size: 16px;  /* Tamaño del texto para párrafos */
+    }
 
-    .card:hover {
-        background-color: darkslategray; /* Fondo más oscuro al pasar el cursor */
-        color: white !important; /* Uso de !important para asegurar prioridad */
-        transform: scale(1.05); /* Aumentar ligeramente el tamaño al pasar el cursor */
-        box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3); /* Mayor sombra para el efecto de elevación */
+    .card-container {
+        display: flex;  /* Usar flexbox para la disposición */
+        flex-direction: row;  /* Alineación horizontal */
+        justify-content: space-between;  /* Espacio uniforme entre tarjetas */
+        align-items: stretch;  /* Asegurar misma altura entre tarjetas */
     }
 
 
+    /* Cambios para pantallas más pequeñas */
+    @media (max-width: 768px) {
+        .card_kpi {
+            font-size: 26px;  /* Tamaño del texto más pequeño */
+            padding: 10px;  /* Menos espacio interno */
+            height: 105px;  /* Altura fija para mantener consistencia */
+        }
+
+        .card_kpi-container {
+            flex-direction: column;  /* Cambiar a disposición vertical */
+        }
+    }
+
+        /* Estilo hover para tarjetas con menor expansión */
+    .card_kpi:hover {
+        background-color: darkslategray;  /* Fondo más oscuro al pasar el cursor */
+        color: white !important;  /* Asegurar prioridad del color */
+        transform: scale(1.01);  /* Reducir la expansión al pasar el cursor */
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);  /* Menor sombra */
+    }
+
+    /* Animación de latido más lenta */
     @keyframes latido {
         0%, 100% {
-            transform: scale(1); /* Sin cambios al inicio y final de la animación */
+            transform: scale(1);  /* Escala normal */
         }
         50% {
-            transform: scale(1.1); /* Aumenta el tamaño a mitad de la animación */
+            transform: scale(1.05);  /* Menor escala a mitad de la animación */
         }
     }
 
@@ -97,6 +121,9 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
+
+
 
 # Título y subtítulo
 st.markdown("<h1 style='text-align: center;'>📊 Análisis de Datos de Pedidos y Entregas con Python 📊</h1>", unsafe_allow_html=True)
@@ -119,45 +146,47 @@ col1, col2, col3, col4, col5, col6 = st.columns(6)
 # Tarjeta para la suma total de pedidos con emoji y formato de miles
 with col1:
     st.markdown(
-        f"<div class='card'>📦 Total Pedidos<br><strong>{suma_total_pedidos:,.0f}</strong></div>",
+        f"<div class='card_kpi'>📦 Total Pedidos<br><strong>{suma_total_pedidos:,.0f}</strong></div>",
         unsafe_allow_html=True
     )
 
 # Tarjeta para la suma total de cantidad vendida con emoji
 with col2:
     st.markdown(
-        f"<div class='card'>📊 Total Cantidad<br><strong>{suma_cantidad_vendida:,.0f}</strong></div>",
+        f"<div class='card_kpi'>📊 Total Cantidad<br><strong>{suma_cantidad_vendida:,.0f}</strong></div>",
         unsafe_allow_html=True
     )
 
 # Tarjeta para la suma de ingresos totales con símbolo de moneda y emoji
 with col3:
     st.markdown(
-        f"<div class='card'>💰 Ingresos Totales<br><strong>${suma_ingresos_totales:,.2f}</strong></div>",
+        f"<div class='card_kpi'>💰 Ingresos Totales<br><strong>${suma_ingresos_totales:,.2f}</strong></div>",
         unsafe_allow_html=True
     )
 
 # Tarjeta para el costo total con símbolo de moneda y emoji
 with col4:
     st.markdown(
-        f"<div class='card'>💸 Costo Total<br><strong>${suma_costo_total:,.2f}</strong></div>",
+        f"<div class='card_kpi'>💸 Costo Total<br><strong>${suma_costo_total:,.2f}</strong></div>",
         unsafe_allow_html=True
     )
 
 # Tarjeta para el margen con símbolo de moneda y emoji
 with col5:
     st.markdown(
-        f"<div class='card'>💹 Margen<br><strong>${suma_margen:,.2f}</strong></div>",
+        f"<div class='card_kpi'>💹 Margen<br><strong>${suma_margen:,.2f}</strong></div>",
         unsafe_allow_html=True
     )
 
 # Tarjeta para el porcentaje de margen con emoji y formato de porcentaje
 with col6:
     st.markdown(
-        f"<div class='card'>📈 % Margen<br><strong>{suma_porcentaje_margen:,.2f}%</strong></div>",
+        f"<div class='card_kpi'>📈 % Margen<br><strong>{suma_porcentaje_margen:,.2f}%</strong></div>",
         unsafe_allow_html=True
     )
 
+# Agregar un salto de línea para separar
+st.write("")  # Esto crea un espacio adicional
 
 
 # Agregar un expander para segmentadores:
@@ -183,6 +212,8 @@ filtered_df = df[
     (df['Cliente'].isin(clientes if "Todos" not in clientes else df['Cliente'].unique())) &
     (df['Vendedor'].isin(vendedores if "Todos" not in vendedores else df['Vendedor'].unique()))
 ]
+
+
 
 # Gráficos por Cliente y Vendedor
 col1, col2 = st.columns(2)
@@ -341,7 +372,7 @@ for idx, periodo in enumerate(ingresos_por_periodo.index):
         st.markdown(
             f"""
             <div class='card animated'>
-                <h4>Período {periodo}</h4>
+                <h4>🗓️Período {periodo}</h4>
                 <h4>💰 Ingresos Totales</h4>
                 <h4>{format_currency(ingreso)}</h4>
                 <h4>📦 Pedidos Totales</h4>
@@ -369,6 +400,10 @@ df['Año'] = df['Fecha pedido'].dt.year
 
 # Agrupar por año y calcular la suma de ingresos
 ingresos_por_ano = df.groupby('Año')['Ingreso Total'].sum().reset_index()
+
+# Agregar un salto de línea para separar
+st.write("")  # Esto crea un espacio adicional
+
 
 # Crear un gráfico de líneas para visualizar la evolución de ingresos por año
 st.subheader("🧬 Evolución de Ingresos por Año")
@@ -504,6 +539,9 @@ else:
             """,
             unsafe_allow_html=True
         )
+
+    # Agregar un salto de línea para separar
+    st.write("")  # Esto crea un espacio adicional
 
     # Mostrar tabla de pedidos y entregas con formato condicional por estado
     st.subheader("🚚 Tabla de Pedidos y Entregas")
