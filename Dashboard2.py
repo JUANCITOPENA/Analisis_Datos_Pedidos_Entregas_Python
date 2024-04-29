@@ -28,6 +28,10 @@ import seaborn as sns
 import folium
 from streamlit_folium import st_folium
 
+# para crar tablas
+import plotly.express as px
+import plotly.io as pio
+import html
 # Configurar el diseño de la página para ser más amplio
 st.set_page_config(layout="wide")
 
@@ -219,12 +223,110 @@ with col6:
     ingreso_fecha = filtered_df.groupby("Fecha pedido")["Ingreso Total"].sum()
     st.line_chart(ingreso_fecha)
     
-    
 
-import streamlit as st
-import folium
-from streamlit_folium import st_folium
-import pandas as pd
+# Segmentador por estado
+
+# Define colores por estado
+estado_colores = {
+    "Entrega Exacta en Lugar": "green",
+    "Dentro del Rango de 30 Metros": "orange",
+    "Fuera del Rango de 30 Metros": "red"
+}
+
+# Define formato para valores monetarios
+def format_currency(value):
+    return "${:,.2f}".format(value)
+
+# Define formato para cantidades
+def format_quantity(value):
+    return "{:,}".format(value)
+
+# Agregar filtro por estado
+estados_seleccionados = st.multiselect(
+    "Filtrar por Estado",
+    df['estado'].unique(),
+    default=df['estado'].unique()
+)
+
+# Filtrar datos según los estados seleccionados
+tabla_datos_filtrada = df[df['estado'].isin(estados_seleccionados)]
+
+# Verificar si hay datos después de filtrar
+if tabla_datos_filtrada.empty:
+    st.warning("No hay datos para mostrar según la selección actual.")
+else:
+    # Calcular ingresos y cantidad de pedidos por estado
+    suma_ingresos_por_estado = tabla_datos_filtrada.groupby('estado')['Ingreso Total'].sum()
+    cantidad_pedidos_por_estado = tabla_datos_filtrada.groupby('estado')['NoPedido'].count()
+
+    # Mostrar tarjetas con ingresos y cantidad de pedidos por estado
+    st.subheader("💵 Suma de Ingresos por Estado y Cantidad de Pedidos")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        ingreso = suma_ingresos_por_estado.get("Entrega Exacta en Lugar", 0)
+        pedidos = cantidad_pedidos_por_estado.get("Entrega Exacta en Lugar", 0)
+        st.markdown(
+            f"""
+            <div style='background-color: {estado_colores["Entrega Exacta en Lugar"]}; 
+                        color: white; padding: 20px; border-radius: 10px; 
+                        text-align: center;'>
+                <h3>💰 Entrega Exacta en Lugar</h3>
+                <h2>{format_currency(ingreso)}</h2>
+                <h4>📦Pedidos: {format_quantity(pedidos)}</h4>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col2:
+        ingreso = suma_ingresos_por_estado.get("Dentro del Rango de 30 Metros", 0)
+        pedidos = cantidad_pedidos_por_estado.get("Dentro del Rango de 30 Metros", 0)
+        st.markdown(
+            f"""
+            <div style='background-color: {estado_colores["Dentro del Rango de 30 Metros"]}; 
+                        color: white; padding: 20px; border-radius: 10px; 
+                        text-align: center;'>
+                <h3>💰Dentro del Rango de 30 Metros</h3>
+                <h2>{format_currency(ingreso)}</h2>
+                <h4>📦Pedidos: {format_quantity(pedidos)}</h4>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col3:
+        ingreso = suma_ingresos_por_estado.get("Fuera del Rango de 30 Metros", 0)
+        pedidos = cantidad_pedidos_por_estado.get("Fuera del Rango de 30 Metros", 0)
+        st.markdown(
+            f"""
+            <div style='background-color: {estado_colores["Fuera del Rango de 30 Metros"]}; 
+                        color: white; padding: 20px; border-radius: 10px; 
+                        text-align: center;'>
+                <h3>💰Fuera del Rango de 30 Metros</h3
+                ><h2>{format_currency(ingreso)}</h2>
+                <h4>📦Pedidos: {format_quantity(pedidos)}</h4>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    # Mostrar tabla de pedidos y entregas con formato condicional por estado
+    st.subheader("Tabla de Pedidos y Entregas")
+    styled_table = tabla_datos_filtrada[
+        ['NoPedido', 'Cliente', 'Vendedor', 'Distribuidor', 'Producto', 'cantidad_vendida', 'Ingreso Total', 'distancia_metros', 'estado']
+    ].style.applymap(lambda val: f"color: {estado_colores.get(val, 'black')};", subset=['estado'])
+
+    st.dataframe(styled_table, use_container_width=True)
+
+ 
+ 
+ 
+ 
+ 
+    
+# Seccion del Mapa":
 
 # Agregar CSS para centrar el contenido
 st.markdown(
