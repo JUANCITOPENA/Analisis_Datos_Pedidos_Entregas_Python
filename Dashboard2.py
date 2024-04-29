@@ -19,6 +19,7 @@ o todo en un solo paso: pip install streamlit pandas matplotlib seaborn
 # pip install streamlit seaborn pandas matplotlib openpyxl
 
 # Instalar las librerías necesarias
+
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -32,6 +33,13 @@ from streamlit_folium import st_folium
 import plotly.express as px
 import plotly.io as pio
 import html
+import numpy as np
+
+import folium
+from folium.plugins import MarkerCluster  # Importar MarkerCluster
+import pandas as pd
+
+
 # Configurar el diseño de la página para ser más amplio
 st.set_page_config(layout="wide")
 
@@ -59,12 +67,22 @@ st.markdown(
         animation: latido 1s infinite; /* Aplica la animación de latido al pasar el cursor */
     }
     
-    .card:hover {
+    /* Mayor especificidad usando una jerarquía de selectores */
+    .container .section .card:hover {
         background-color: darkslategray; /* Fondo más oscuro al pasar el cursor */
         color: white; /* Texto blanco al pasar el cursor */
         transform: scale(1.05); /* Aumentar ligeramente el tamaño al pasar el cursor */
         box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3); /* Mayor sombra para el efecto de elevación */
     }
+
+
+    .card:hover {
+        background-color: darkslategray; /* Fondo más oscuro al pasar el cursor */
+        color: white !important; /* Uso de !important para asegurar prioridad */
+        transform: scale(1.05); /* Aumentar ligeramente el tamaño al pasar el cursor */
+        box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3); /* Mayor sombra para el efecto de elevación */
+    }
+
 
     @keyframes latido {
         0%, 100% {
@@ -140,27 +158,33 @@ with col6:
         unsafe_allow_html=True
     )
 
-# Agregar un expander para segmentadores
-with st.expander("Filtros"):
-    clientes = st.multiselect("Seleccione Clientes", df['Cliente'].unique(), default=df['Cliente'].unique())
-    vendedores = st.multiselect("Seleccione Vendedores", df['Vendedor'].unique(), default=df['Vendedor'].unique())
-    distribuidores = st.multiselect("Seleccione Distribuidores", df['Distribuidor'].unique(), default=df['Distribuidor'].unique())
-    ciudades = st.multiselect("Seleccione Ciudades", df['Ciudad'].unique(), default=df['Ciudad'].unique())
-    estados = st.multiselect("Seleccione Estados", df['estado'].unique(), default=df['estado'].unique())
-    
-    
-# Aplicar filtros a los datos
+
+
+# Agregar un expander para segmentadores:
+
+# Función para obtener opciones de selección con "Todos"
+def get_multiselect_options(column):
+    return ["Todos"] + list(df[column].unique())
+
+# Filtrar el DataFrame según los segmentadores
+clientes = df['Cliente'].unique()
+vendedores = df['Vendedor'].unique()
+distribuidores = df['Distribuidor'].unique()
+ciudades = df['Ciudad'].unique()
+estados = df['estado'].unique()
+
+# Sección para gráficos por Cliente y Vendedor
+with st.expander("Filtro por Cliente y Vendedor"):
+    clientes = st.multiselect("Seleccione Clientes", get_multiselect_options("Cliente"), default=["Todos"], key="filtro_cliente")
+    vendedores = st.multiselect("Seleccione Vendedores", get_multiselect_options("Vendedor"), default=["Todos"], key="filtro_vendedor")
+
+# Filtrar el DataFrame según los valores seleccionados
 filtered_df = df[
-    (df['Cliente'].isin(clientes)) & 
-    (df['Vendedor'].isin(vendedores)) & 
-    (df['Distribuidor'].isin(distribuidores)) & 
-    (df['Ciudad'].isin(ciudades)) &
-    (df['estado'].isin(estados))
+    (df['Cliente'].isin(clientes if "Todos" not in clientes else df['Cliente'].unique())) &
+    (df['Vendedor'].isin(vendedores if "Todos" not in vendedores else df['Vendedor'].unique()))
 ]
 
-# Crear gráficos para el dashboard
-
-# Sección 1: Gráficos por Cliente y por Vendedor
+# Gráficos por Cliente y Vendedor
 col1, col2 = st.columns(2)
 
 with col1:
@@ -173,18 +197,32 @@ with col2:
     ingreso_vendedor = filtered_df.groupby("Vendedor")["Ingreso Total"].sum().sort_values()
     st.bar_chart(ingreso_vendedor)
 
-# Sección 2: Ingreso por Distribuidor y por Producto
-col3, col4 = st.columns(2)
+# Sección para gráficos por Distribuidor y Producto
+with st.expander("Filtro por Distribuidor y Producto"):
+    distribuidores = st.multiselect("Seleccione Distribuidores", get_multiselect_options("Distribuidor"), default=["Todos"], key="filtro_distribuidor")
+    productos = st.multiselect("Seleccione Productos", get_multiselect_options("Producto"), default=["Todos"], key="filtro_producto")
 
-with col3:
+# Filtrar el DataFrame según los valores seleccionados
+filtered_df = df[
+    (df['Distribuidor'].isin(distribuidores if "Todos" not in distribuidores else df['Distribuidor'].unique())) &
+    (df['Producto'].isin(productos if "Todos" not in productos else df['Producto'].unique()))
+]
+
+# Gráficos por Distribuidor y Producto
+col1, col2 = st.columns(2)
+
+with col1:
     st.subheader("🛒 Ingreso por Distribuidor")
     ingreso_distribuidor = filtered_df.groupby("Distribuidor")["Ingreso Total"].sum().sort_values()
     st.bar_chart(ingreso_distribuidor)
 
-with col4:
+with col2:
     st.subheader("📈 Ingreso por Producto")
     ingreso_producto = filtered_df.groupby("Producto")["Ingreso Total"].sum().sort_values()
     st.bar_chart(ingreso_producto)
+    
+    
+    
 
 # Sección 3: Gráfico Circular por Estado y Gráfico de Líneas por Fecha
 col5, col6 = st.columns(2)
@@ -224,7 +262,169 @@ with col6:
     st.line_chart(ingreso_fecha)
     
 
-# Segmentador por estado
+# FIN DE LOS ESTADO Y LINEAS:
+
+
+###_-----------------------------------------------------------------####
+
+# INICIO SECCION TARJETAS POR PERIODOS
+
+# Inyectar CSS para personalizar el estilo de las tarjetas
+st.markdown(
+    """
+    <style>
+    .card {
+        background: #333;  /* Fondo oscuro */
+        color: white;  /* Texto claro */
+        padding: 20px;  /* Espacio interno */
+        border-radius: 15px;  /* Bordes redondeados */
+        border: 2px solid limegreen;  /* Borde verde fluorescente */
+        box-shadow: 4px 4px 12px rgba(0, 255, 0, 0.5);  /* Sombra verde */
+        text-align: center;  /* Texto centrado */
+        font-weight: bold;  /* Texto en negrita */
+        transition: all 0.3s ease;  /* Transición suave */
+    }
+
+    /* Efecto hover para la tarjeta */
+    .card:hover {
+        background: #444;  /* Fondo más oscuro */
+        color: #f00;  /* Texto rojo */
+        transform: scale(1.05);  /* Escala mayor al pasar el ratón */
+        box-shadow: 8px 8px 16px rgba(255, 0, 0, 0.5);  /* Sombra roja */
+    }
+
+    /* Animación de latido para enfatizar */
+    @keyframes latido {
+        0%, 100% {
+            transform: scale(1);  /* Escala normal */
+        }
+        50% {
+            transform: scale(1.1);  /* Mayor escala */
+        }
+    }
+
+    /* Aplicar la animación a la tarjeta */
+    .card.animated {
+        animation: latido 1s infinite;  /* Repetir para siempre */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Definir función para formato de moneda y cantidad
+def format_currency(value):
+    return "${:,.2f}".format(value)
+
+def format_quantity(value):
+    return "{:,}".format(value)
+
+# Leer el DataFrame
+df = pd.read_excel('Vista_Detalles_Pedidos_V1.xlsx')
+
+# Convertir 'Fecha pedido' a tipo datetime
+df['Fecha pedido'] = pd.to_datetime(df['Fecha pedido'], errors='coerce')
+
+# Crear intervalos de 3 años (2010 al 2024)
+bins = np.arange(2010, 2027, 3)
+labels = [f"{start}-{start + 2}" for start in bins[:-1]]
+
+# Añadir una columna para los periodos
+df['Periodo'] = pd.cut(df['Fecha pedido'].dt.year, bins=bins, labels=labels, right=False)
+
+# Calcular ingresos y pedidos por período
+ingresos_por_periodo = df.groupby('Periodo')['Ingreso Total'].sum()
+pedidos_por_periodo = df.groupby('Periodo')['NoPedido'].count()
+
+# Crear secciones de tarjetas para cada período
+st.subheader("💹 Ingresos y Pedidos por Período (3 años)")
+
+cols = st.columns(len(ingresos_por_periodo))
+
+# Agregar tarjetas para cada período con el nuevo estilo y animación
+for idx, periodo in enumerate(ingresos_por_periodo.index):
+    ingreso = ingresos_por_periodo[periodo]
+    pedidos = pedidos_por_periodo[periodo]
+
+    with cols[idx]:
+        st.markdown(
+            f"""
+            <div class='card animated'>
+                <h3>Período {periodo}</h3>
+                <h4>💰 Ingresos Totales</h4>
+                <h2>{format_currency(ingreso)}</h2>
+                <h4>📦 Pedidos Totales</h4>
+                <h2>{format_quantity(pedidos)}</h2>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )      
+
+
+
+# FIN SECCION TARJETAS POR PERIODOS
+
+###_-----------------------------------------------------------------####
+
+
+
+# INCIIO SECCION GRAFICO POR PERIODOS:
+
+# Asegurarse de que la columna de fechas sea de tipo datetime
+df['Fecha pedido'] = pd.to_datetime(df['Fecha pedido'], errors='coerce')
+
+# Extraer el año de la fecha del pedido
+df['Año'] = df['Fecha pedido'].dt.year
+
+# Agrupar por año y calcular la suma de ingresos
+ingresos_por_ano = df.groupby('Año')['Ingreso Total'].sum().reset_index()
+
+# Crear un gráfico de líneas para visualizar la evolución de ingresos por año
+st.subheader("🧬 Evolución de Ingresos por Año")
+
+fig = px.line(
+    ingresos_por_ano,
+    x="Año",
+    y="Ingreso Total",
+    labels={"Año": "Año", "Ingreso Total": "Ingresos ($)"},
+    title="Evolución de Ingresos por Año",
+    markers=True,  # Añadir marcadores para mayor visibilidad
+    text="Ingreso Total",  # Mostrar el valor de ingresos como texto en cada punto
+    color_discrete_sequence=px.colors.qualitative.Set3,  # Cambiar los colores de las líneas
+)
+
+# Ajustar el estilo del título y el tamaño del gráfico
+fig.update_layout(
+    width=800,
+    height=400,
+    plot_bgcolor="rgba(0,0,0,0)",  # Fondo transparente
+    paper_bgcolor="rgba(0,0,0,0)",  # Fondo transparente
+    title_font=dict(size=20, color="white"),  # Título en blanco
+    legend=dict(
+        orientation="h",  # Leyenda horizontal
+        xanchor="center",  # Anclar al centro
+        x=0.5,  # Ubicación de la leyenda
+        y=-0.1,  # Posición de la leyenda (debajo del gráfico)
+    ),
+    xaxis=dict(showgrid=True, gridcolor="lightgray", zeroline=False),  # Líneas de cuadrícula en el eje X
+    yaxis=dict(showgrid=True, gridcolor="lightgray", zeroline=False),  # Líneas de cuadrícula en el eje Y
+)
+
+# Ajustar el tamaño de los puntos y mostrar las etiquetas
+fig.update_traces(
+    marker=dict(size=10),  # Tamaño de los puntos
+    textposition="top center",  # Posición de las etiquetas
+)
+
+# Mostrar el gráfico en Streamlit
+st.plotly_chart(fig, use_container_width=True)
+
+# FIN SECCION GRAFICO POR PERIODOS:
+
+
+###_-----------------------------------------------------------------####
+
+# SECCION TARJETAS O CARD POR ESTADO Y Segmentador por estado
 
 # Define colores por estado
 estado_colores = {
@@ -232,6 +432,8 @@ estado_colores = {
     "Dentro del Rango de 30 Metros": "orange",
     "Fuera del Rango de 30 Metros": "red"
 }
+
+
 
 # Define formato para valores monetarios
 def format_currency(value):
@@ -313,7 +515,7 @@ else:
         )
 
     # Mostrar tabla de pedidos y entregas con formato condicional por estado
-    st.subheader("Tabla de Pedidos y Entregas")
+    st.subheader("🚚 Tabla de Pedidos y Entregas")
     styled_table = tabla_datos_filtrada[
         ['NoPedido', 'Cliente', 'Vendedor', 'Distribuidor', 'Producto', 'cantidad_vendida', 'Ingreso Total', 'distancia_metros', 'estado']
     ].style.applymap(lambda val: f"color: {estado_colores.get(val, 'black')};", subset=['estado'])
@@ -322,12 +524,13 @@ else:
 
  
  
+ # FIN SECCION TARJETAS O CARD POR ESTADO Y Segmentador por estado
  
+ ###_-----------------------------------------------------------------####
  
- 
+ # ININICIO SECCION MAPA INTERACTIVO POR ENTREGAS Y ESTADOS. CLUSTER DINAMICO Y TOOLTIPS
     
 # Seccion del Mapa":
-
 # Agregar CSS para centrar el contenido
 st.markdown(
     """
@@ -336,62 +539,282 @@ st.markdown(
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100%;  # Asegúrate de que el contenedor tenga una altura definida
+        height: 100%;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# Subtítulo para el mapa
-st.subheader("🗺️ Mapa de Geolocalización")
 
-# Crear el mapa con Folium
+# Agregar "Todos" a las listas de opciones
+estado_opciones = ["Todos"] + list(df['estado'].unique())
+distribuidor_opciones = ["Todos"] + list(df['Distribuidor'].unique())
+
+# Selectbox para Estados con opción "Todos"
+estado_seleccionado = st.selectbox(
+    "Seleccione Estado",
+    options=estado_opciones,
+    index=0,  # "Todos" como selección predeterminada
+    key='unique_estado'
+)
+
+# Selectbox para Distribuidores con opción "Todos"
+distribuidor_seleccionado = st.selectbox(
+    "Seleccione Distribuidor",
+    options=distribuidor_opciones,
+    index=0,
+    key='unique_distribuidor'
+)
+
+# Aplicar lógica para el filtro
+if estado_seleccionado == "Todos":
+    estados_filtrados = df['estado'].unique()  # Todos los estados
+else:
+    estados_filtrados = [estado_seleccionado]
+
+if distribuidor_seleccionado == "Todos":
+    distribuidores_filtrados = df['Distribuidor'].unique()  # Todos los distribuidores
+else:
+    distribuidores_filtrados = [distribuidor_seleccionado]
+
+# Filtrar el DataFrame según el estado y distribuidor seleccionados
+filtered_df = df[
+    (df['estado'].isin(estados_filtrados)) &
+    (df['Distribuidor'].isin(distribuidores_filtrados))
+]
+
+
+# Crear el mapa con Folium y agregar un MarkerCluster para mejorar el rendimiento
+import folium
+from folium.plugins import MarkerCluster  # Importa el MarkerCluster
+
+# Configurar el mapa
 mapa = folium.Map(location=[18.486057, -69.931212], zoom_start=12)
 
-# Selector para distribuidor con un `key` único para evitar duplicados
-distribuidores = st.multiselect("Seleccione Distribuidores", df['Distribuidor'].unique(), default=df['Distribuidor'].unique(), key='unique_distribuidores')
+# Agregar un MarkerCluster para agrupar marcadores
+marker_cluster = MarkerCluster().add_to(mapa)
 
-# Filtrar datos según el distribuidor seleccionado
-filtered_df = df[df['Distribuidor'].isin(distribuidores)]
-
-# Agregar marcadores con colores según el estado
+# Aplicar colores para los estados
 estado_colores = {
     "Entrega Exacta en Lugar": "green",
     "Dentro del Rango de 30 Metros": "orange",
     "Fuera del Rango de 30 Metros": "red"
 }
 
-# Agregar marcadores al mapa basados en el DataFrame filtrado
+# Agregar marcadores al cluster basados en el DataFrame filtrado
 for _, fila in filtered_df.iterrows():
     latitud = fila['Latitud_Cliente']
     longitud = fila['Longitud_Cliente']
     estado = fila['estado']
 
-    color = estado_colores[estado]
-
+    # Formatear el tooltip para que sea más legible y grande
     tooltip_text = (
-        f"Cliente: {fila['Cliente']}<br>"
-        f"Distribuidor: {fila['Distribuidor']}<br>"
-        f"Estado: {estado}<br>"
-        f"Ingreso Total: {fila.get('Ingreso Total', 'N/A')}"
+        f"<strong>Cliente:</strong> {fila['Cliente']}<br>"
+        f"<strong>Distribuidor:</strong> {fila['Distribuidor']}<br>"
+        f"<strong>Producto:</strong> {fila['Producto']}<br>"
+        f"<strong>Distancia:</strong> {fila['distancia_metros']:.2f} metros<br>"
+        f"<strong>Estado:</strong> {estado}<br>"
+        f"<strong>Ingreso Total:</strong> ${fila.get('Ingreso Total', 'N/A'):.2f}"
     )
 
     folium.Marker(
         location=[latitud, longitud],
         tooltip=tooltip_text,
-        icon=folium.Icon(color=color, icon='info-sign')
-    ).add_to(mapa)
+        icon=folium.Icon(color=estado_colores.get(estado, 'blue'), icon='info-sign')
+    ).add_to(marker_cluster)
 
-# Usar CSS para centrar el mapa
+# Mostrar el mapa en Streamlit con tamaño ajustable
 st.markdown("<div class='centered'>", unsafe_allow_html=True)
-st_folium(mapa, width=1500, height=600)  # Ajusta el ancho y altura según necesites
+st_folium(mapa, width=1500, height=600, key='unique_mapa')  # Puedes cambiar el tamaño según tus necesidades
 st.markdown("</div>", unsafe_allow_html=True)
 
+ # FIN  SECCION MAPA INTERACTIVO POR ENTREGAS Y ESTADOS. CLUSTER DINAMICO Y TOOLTIPS
 
 
+###---------------------------------------------------------------------------###
 
-# Pie de página
+# INICIOS DE SECCOPM DE LOS GRAFICOS ADICIONALES DE ENTREGA POR DISTANCIA:
+
+# CSS para centrar el contenido
+st.markdown(
+    """
+    <style>
+    .centered {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Sección para gráficos con dos columnas
+st.subheader("📊 Gráficos Adicionales 📊")
+
+col1, col2 = st.columns(2)
+
+# Gráfico de líneas por fecha y estado
+with col1:
+    st.subheader("💵 Ingresos por Fecha y Estado")
+
+    # Agrupar datos por fecha y estado para obtener los ingresos totales
+    df_agg = filtered_df.groupby(["Fecha pedido", "estado"])["Ingreso Total"].sum().reset_index()
+
+    # Gráfico de líneas para mostrar ingresos por estado
+    fig = px.line(
+        df_agg,
+        x="Fecha pedido",
+        y="Ingreso Total",
+        color="estado",
+        labels={"Fecha pedido": "Fecha", "Ingreso Total": "Ingresos ($)"},
+        title="Ingresos por Fecha para cada Estado",
+        line_shape="linear",
+        color_discrete_map={
+            "Entrega Exacta en Lugar": "green",
+            "Dentro del Rango de 30 Metros": "orange",
+            "Fuera del Rango de 30 Metros": "red"
+        }  # Aplicar colores consistentes para cada estado
+    )
+
+    # Ajustar el tamaño del gráfico y la posición de la leyenda
+    fig.update_layout(
+        width=700,
+        height=450,
+        legend=dict(
+            orientation="h",
+            xanchor="center",
+            x=0.5
+        )
+    )
+
+    st.plotly_chart(fig)
+
+# Gráfico de barras horizontales para la distancia promedio por distribuidor
+with col2:
+    st.subheader("🗺️ Distancia Promedio por Distribuidor")
+
+    # Calcular la distancia promedio por distribuidor
+    df_distancia = filtered_df.groupby("Distribuidor")["distancia_metros"].mean().reset_index()
+
+    # Gráfico de barras horizontales para mostrar la distancia promedio
+    fig = px.bar(
+        df_distancia,
+        x="distancia_metros",
+        y="Distribuidor",
+        orientation="h",
+        labels={"distancia_metros": "Distancia Promedio (m)", "Distribuidor": "Distribuidor"},
+        title="Distancia Promedio por Distribuidor"
+    )
+
+    # Ajustar el tamaño del gráfico y la posición de la leyenda
+    fig.update_layout(
+        width=700,
+        height=450,
+        legend=dict(
+            orientation="h",
+            xanchor="center",
+            x=0.5
+        )
+    )
+
+    st.plotly_chart(fig)
+    
+# FIND E LOS GRAFICOS ADICIONALES DE ENTREGA POR DISTANCIA:
+
+
+###---------------------------------------------------------------------------###
+
+
+# INICIO DE SECCION TABLA CON ESTADO Y GRAFICO DE DISPERSION:
+
+# Segmentador por estado
+estado_seleccionado = st.selectbox(
+    "Seleccione Estado para ver el Top 10",
+    options=list(df['estado'].unique()),
+    index=0  # Puedes cambiar el índice para seleccionar un estado por defecto
+)
+
+# Crear una función para obtener el Top 10 por estado
+def get_top_10_by_state(df, state):
+    # Filtrar por estado y ordenar por distancia
+    state_df = df[df['estado'] == state].sort_values(by='distancia_metros')
+    # Tomar los primeros 10
+    return state_df.head(10)
+
+# Obtener el Top 10 para el estado seleccionado
+top_10_df = get_top_10_by_state(df, estado_seleccionado)
+
+# Aplicar colores para formato condicional en la columna 'estado'
+estado_colores = {
+    "Entrega Exacta en Lugar": "green",
+    "Dentro del Rango de 30 Metros": "orange",
+    "Fuera del Rango de 30 Metros": "red"
+}
+
+# Función para formato condicional
+def formato_estado(val):
+    color = estado_colores.get(val, 'black')
+    return f"color: {color};"
+
+# Mostrar el DataFrame con formato condicional
+st.subheader(f"🔝Top 10 por Estado 🏅 : {estado_seleccionado}")
+styled_table = top_10_df[
+    ['NoPedido', 'Fecha pedido', 'Distribuidor', 'Producto', 'cantidad_vendida', 'Ingreso Total', 'distancia_metros', 'estado']
+].style.applymap(formato_estado, subset=['estado'])
+
+st.dataframe(styled_table, use_container_width=True)
+# Subtítulo para la nueva sección
+# Definir colores por estado
+estado_colores = {
+    "Entrega Exacta en Lugar": "green",
+    "Dentro del Rango de 30 Metros": "yellow",
+    "Fuera del Rango de 30 Metros": "red"
+}
+
+# Aplicar el color según el estado
+df['Color'] = df['estado'].map(estado_colores)
+
+# Gráfico de dispersión por distribuidor y distancia
+# Gráfico de dispersión
+fig = px.scatter(
+    df,
+    x="Distribuidor",
+    y="distancia_metros",
+    color='Color',
+    labels={"Distribuidor": "Distribuidor", "distancia_metros": "Distancia (metros)"},
+    title="📏🏃‍♂️ Distancia por Distribuidor y Estado 📌🗺️",
+    hover_data=["Cliente", "Producto", "Vendedor", "Ingreso Total"]
+)
+
+# Ajustar el tamaño del texto del título
+fig.update_layout(
+    title={
+        'text': "📏🏃‍♂️ Distancia por Distribuidor y Estado 📌🗺️",
+        'x': 0.5,  # Centrar el título
+        'xanchor': 'center',
+        'yanchor': 'top',
+        'font': {
+            'size': 26  # Tamaño del texto
+        }
+    }
+)
+# Ajustar el diseño del gráfico
+fig.update_layout(
+    plot_bgcolor="rgba(0, 0, 0, 0)",  # Fondo transparente
+    showlegend=False,  # Ocultar la leyenda si es redundante
+)
+
+# Mostrar el gráfico en Streamlit con todo el ancho
+st.plotly_chart(fig, use_container_width=True)
+
+
+# FIN DE TABLA.
+
+###---------------------------------------------------------------------------###
+
+# SECCION DEL PIE DE PAGINAS
 footer_html = """
 <div style='text-align: center; color: lime; font-size: 18px; font-weight: bold;'>
   <br>
@@ -405,7 +828,7 @@ footer_html = """
 
 st.markdown(footer_html, unsafe_allow_html=True)
 
-
+###---------------------------------------------------------------------------###
 
 # Instrucciones para ejecutar el dashboard
 # Desde la consola, en la carpeta de tu proyecto, ejecuta: `streamlit run Dashboard.py`
