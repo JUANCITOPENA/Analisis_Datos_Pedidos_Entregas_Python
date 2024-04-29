@@ -87,11 +87,11 @@ El dashboard está compuesto por varias secciones y gráficos para el análisis 
 
 ## 📊 Capturas:
 ---
-![](FONDO1.png)
+![](imagenes/FONDO1.png)
 
-![](FONDO2.png)
+![](imagenes/FONDO2.png)
 
-![](FONDO3.png)
+![](imagenes/FONDO3.png)
 
 
 ## 🏷️ Licencia 🏷️
