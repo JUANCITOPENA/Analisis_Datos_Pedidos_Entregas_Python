@@ -4,4 +4,7 @@ matplotlib>==3.8.2
 seaborn>==0.13.2
 folium>==0.16.0
 openpyxl>==3.1.2
-streamlit_folium                            
+streamlit_folium    
+plotly.express                        
+plotly.io
+html
