@@ -48,7 +48,29 @@ st.markdown(
         text-align: center;  /* Texto centrado */
         margin: 10px;  /* Espacio externo */
         color:black;
+        font-size: 19px; /* Tamaño de la letra */
+        font-weight: bold; /* Letra negrita */
+        color: darkblue; /* Color de la letra */
+        transition: all 0.3s ease; /* Transición suave para los cambios de estilo */
+        animation: latido 1s infinite; /* Aplica la animación de latido al pasar el cursor */
     }
+    
+    .card:hover {
+        background-color: darkslategray; /* Fondo más oscuro al pasar el cursor */
+        color: white; /* Texto blanco al pasar el cursor */
+        transform: scale(1.05); /* Aumentar ligeramente el tamaño al pasar el cursor */
+        box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3); /* Mayor sombra para el efecto de elevación */
+    }
+
+    @keyframes latido {
+        0%, 100% {
+            transform: scale(1); /* Sin cambios al inicio y final de la animación */
+        }
+        50% {
+            transform: scale(1.1); /* Aumenta el tamaño a mitad de la animación */
+        }
+    }
+
     </style>
     """,
     unsafe_allow_html=True
@@ -68,7 +90,7 @@ suma_margen = df["Margen"].sum()
 suma_porcentaje_margen = df["% Margen"].mean()
 
 # Crear tarjetas para mostrar las sumas totales
-st.subheader("Indicadores Clave")
+st.subheader("📉 Indicadores Clave 📉")
 
 # Sección horizontal para las tarjetas
 col1, col2, col3, col4, col5, col6 = st.columns(6)
@@ -82,7 +104,7 @@ with col1:
 # Tarjeta para la suma total de cantidad vendida con emoji
 with col2:
     st.markdown(
-        f"<div class='card'>📊 Cantidad Vendida<br><strong>{suma_cantidad_vendida:,.0f}</strong></div>",
+        f"<div class='card'>📊 Total Cantidad<br><strong>{suma_cantidad_vendida:,.0f}</strong></div>",
         unsafe_allow_html=True
     )
 
@@ -138,12 +160,12 @@ filtered_df = df[
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("Ingreso por Cliente")
+    st.subheader("👥 Ingreso por Cliente")
     ingreso_cliente = filtered_df.groupby("Cliente")["Ingreso Total"].sum().sort_values()
     st.bar_chart(ingreso_cliente)
 
 with col2:
-    st.subheader("Ingreso por Vendedor")
+    st.subheader("👤 Ingreso por Vendedor")
     ingreso_vendedor = filtered_df.groupby("Vendedor")["Ingreso Total"].sum().sort_values()
     st.bar_chart(ingreso_vendedor)
 
@@ -151,12 +173,12 @@ with col2:
 col3, col4 = st.columns(2)
 
 with col3:
-    st.subheader("Ingreso por Distribuidor")
+    st.subheader("🛒 Ingreso por Distribuidor")
     ingreso_distribuidor = filtered_df.groupby("Distribuidor")["Ingreso Total"].sum().sort_values()
     st.bar_chart(ingreso_distribuidor)
 
 with col4:
-    st.subheader("Ingreso por Producto")
+    st.subheader("📈 Ingreso por Producto")
     ingreso_producto = filtered_df.groupby("Producto")["Ingreso Total"].sum().sort_values()
     st.bar_chart(ingreso_producto)
 
@@ -164,7 +186,7 @@ with col4:
 col5, col6 = st.columns(2)
 
 with col5:
-    st.subheader("Distribución por Estado")
+    st.subheader("⚖️ Distribución por Estado")
     fig, ax = plt.subplots()
 
     # Aplicar colores condicionales según el estado
@@ -189,12 +211,20 @@ with col5:
         startangle=90
     )
     st.pyplot(fig)
-
+    
+  # Grafica de lineas
+  
 with col6:
-    st.subheader("Ingreso por Fecha")
+    st.subheader("📅 Ingreso por Fecha")
     ingreso_fecha = filtered_df.groupby("Fecha pedido")["Ingreso Total"].sum()
     st.line_chart(ingreso_fecha)
+    
+    
 
+import streamlit as st
+import folium
+from streamlit_folium import st_folium
+import pandas as pd
 
 # Agregar CSS para centrar el contenido
 st.markdown(
@@ -212,10 +242,16 @@ st.markdown(
 )
 
 # Subtítulo para el mapa
-st.subheader("Mapa de Geolocalización")
+st.subheader("🗺️ Mapa de Geolocalización")
 
 # Crear el mapa con Folium
 mapa = folium.Map(location=[18.486057, -69.931212], zoom_start=12)
+
+# Selector para distribuidor con un `key` único para evitar duplicados
+distribuidores = st.multiselect("Seleccione Distribuidores", df['Distribuidor'].unique(), default=df['Distribuidor'].unique(), key='unique_distribuidores')
+
+# Filtrar datos según el distribuidor seleccionado
+filtered_df = df[df['Distribuidor'].isin(distribuidores)]
 
 # Agregar marcadores con colores según el estado
 estado_colores = {
@@ -224,17 +260,18 @@ estado_colores = {
     "Fuera del Rango de 30 Metros": "red"
 }
 
-# Suponiendo que 'df' es tu DataFrame que contiene las coordenadas y estados
-for _, fila in df.iterrows():
+# Agregar marcadores al mapa basados en el DataFrame filtrado
+for _, fila in filtered_df.iterrows():
     latitud = fila['Latitud_Cliente']
     longitud = fila['Longitud_Cliente']
     estado = fila['estado']
-    
+
     color = estado_colores[estado]
 
     tooltip_text = (
         f"Cliente: {fila['Cliente']}<br>"
-        f"Estado: {fila['estado']}<br>"
+        f"Distribuidor: {fila['Distribuidor']}<br>"
+        f"Estado: {estado}<br>"
         f"Ingreso Total: {fila.get('Ingreso Total', 'N/A')}"
     )
 
@@ -245,10 +282,10 @@ for _, fila in df.iterrows():
     ).add_to(mapa)
 
 # Usar CSS para centrar el mapa
-# Envuelve el mapa en un div con la clase 'centered'
 st.markdown("<div class='centered'>", unsafe_allow_html=True)
-st_folium(mapa, width=1500)  # Ajusta el ancho según necesites
+st_folium(mapa, width=1500, height=600)  # Ajusta el ancho y altura según necesites
 st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
@@ -258,7 +295,7 @@ footer_html = """
   <br>
   <a href='https://www.youtube.com/@JuancitoPenaV' target='_blank' style='font-size: 18px;'>🔴 YouTube</a> | 
   <a href='https://www.linkedin.com/in/juancitope%C3%B1a/' target='_blank' style='font-size: 18px;'>🔵 LinkedIn</a> | 
-  <a href='https://github.com/JUANCITOPENA?tab=repositories' target='_blank' style='font-size: 18px;'>⚫ GitHub</a>
+  <a href='https://github.com/JUANCITOPENA/Analisis_Datos_Pedidos_Entregas_Python' target='_blank' style='font-size: 18px;'>⚫ GitHub</a>
   <br><br>
   <h3>© 2023 Advisertecnology - Todos los derechos reservados | <a href='https://advisertecnology.com/' target='_blank'>www.advisertecnology.com</a></h3>
 </div>
