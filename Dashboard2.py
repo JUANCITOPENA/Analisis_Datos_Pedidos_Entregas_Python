@@ -196,11 +196,6 @@ with col6:
     st.line_chart(ingreso_fecha)
 
 
-
-import streamlit as st
-import folium
-from streamlit_folium import st_folium
-
 # Agregar CSS para centrar el contenido
 st.markdown(
     """
@@ -252,20 +247,20 @@ for _, fila in df.iterrows():
 # Usar CSS para centrar el mapa
 # Envuelve el mapa en un div con la clase 'centered'
 st.markdown("<div class='centered'>", unsafe_allow_html=True)
-st_folium(mapa, width=1400)  # Ajusta el ancho según necesites
+st_folium(mapa, width=1500)  # Ajusta el ancho según necesites
 st.markdown("</div>", unsafe_allow_html=True)
 
 
 
 # Pie de página
 footer_html = """
-<div style='text-align: center; color: lime; font-weight: bold;'>
+<div style='text-align: center; color: lime; font-size: 18px; font-weight: bold;'>
   <br>
-  <a href='https://www.youtube.com/@JuancitoPenaV' target='_blank'>🔴 YouTube</a> | 
-  <a href='https://www.linkedin.com/in/juancitope%C3%B1a/' target='_blank'>🔵 LinkedIn</a> | 
-  <a href='https://github.com/JUANCITOPENA?tab=repositories' target='_blank'>⚫ GitHub</a>
+  <a href='https://www.youtube.com/@JuancitoPenaV' target='_blank' style='font-size: 18px;'>🔴 YouTube</a> | 
+  <a href='https://www.linkedin.com/in/juancitope%C3%B1a/' target='_blank' style='font-size: 18px;'>🔵 LinkedIn</a> | 
+  <a href='https://github.com/JUANCITOPENA?tab=repositories' target='_blank' style='font-size: 18px;'>⚫ GitHub</a>
   <br><br>
-  © 2023 Advisertecnology - Todos los derechos reservados | <a href='https://advisertecnology.com/' target='_blank'>www.advisertecnology.com</a>
+  <h3>© 2023 Advisertecnology - Todos los derechos reservados | <a href='https://advisertecnology.com/' target='_blank'>www.advisertecnology.com</a></h3>
 </div>
 """
 
