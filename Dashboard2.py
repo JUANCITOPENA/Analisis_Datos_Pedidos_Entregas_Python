@@ -269,49 +269,40 @@ with col6:
 
 # INICIO SECCION TARJETAS POR PERIODOS
 
-# Inyectar CSS para personalizar el estilo de las tarjetas
+# Inyectar CSS para establecer fondo negro y texto blanco
 st.markdown(
     """
     <style>
-    .card {
-        background: #333;  /* Fondo oscuro */
-        color: white;  /* Texto claro */
-        padding: 20px;  /* Espacio interno */
-        border-radius: 15px;  /* Bordes redondeados */
-        border: 2px solid limegreen;  /* Borde verde fluorescente */
-        box-shadow: 4px 4px 12px rgba(0, 255, 0, 0.5);  /* Sombra verde */
-        text-align: center;  /* Texto centrado */
+    /* Estilo para tarjetas con fondo negro y texto blanco */
+    .card.animated {
+        background-color: #000000;  /* Fondo negro */
+        color: #ffffff;  /* Texto blanco */
+        padding: 10px;  /* Espacio interno reducido */
+        border-radius: 10px;  /* Bordes redondeados */
+        border: 1px solid limegreen;  /* Borde verde para contraste */
+        box-shadow: 2px 2px 6px rgba(0, 255, 0, 0.2);  /* Sombra sutil */
+        font-size: 18px;  /* Tamaño de fuente más pequeño */
         font-weight: bold;  /* Texto en negrita */
         transition: all 0.3s ease;  /* Transición suave */
+        text-align: center;  /* Texto centrado */
     }
 
-    /* Efecto hover para la tarjeta */
-    .card:hover {
-        background: #444;  /* Fondo más oscuro */
-        color: #f00;  /* Texto rojo */
-        transform: scale(1.05);  /* Escala mayor al pasar el ratón */
-        box-shadow: 8px 8px 16px rgba(255, 0, 0, 0.5);  /* Sombra roja */
+    /* Cambiar estilo al pasar el cursor sobre la tarjeta */
+    .card.animated:hover {
+        background-color: #333333;  /* Fondo más claro al pasar el cursor */
+        box-shadow: 4px 4px 12px rgba(255, 255, 255, 0.3);  /* Mayor sombra */
     }
 
-    /* Animación de latido para enfatizar */
-    @keyframes latido {
-        0%, 100% {
-            transform: scale(1);  /* Escala normal */
-        }
-        50% {
-            transform: scale(1.1);  /* Mayor escala */
-        }
-    }
-
-    /* Aplicar la animación a la tarjeta */
-    .card.animated {
-        animation: latido 1s infinite;  /* Repetir para siempre */
+    /* Estilo para etiquetas <h4> dentro de .card.animated */
+    .card.animated h4 {
+        font-size: 18px;  /* Tamaño del texto */
+        margin: 5px 0;  /* Reducir margen */
+        color: #ffffff !important;  /* Asegurar texto blanco */
     }
     </style>
     """,
     unsafe_allow_html=True
 )
-
 # Definir función para formato de moneda y cantidad
 def format_currency(value):
     return "${:,.2f}".format(value)
@@ -350,11 +341,11 @@ for idx, periodo in enumerate(ingresos_por_periodo.index):
         st.markdown(
             f"""
             <div class='card animated'>
-                <h3>Período {periodo}</h3>
+                <h4>Período {periodo}</h4>
                 <h4>💰 Ingresos Totales</h4>
-                <h2>{format_currency(ingreso)}</h2>
+                <h4>{format_currency(ingreso)}</h4>
                 <h4>📦 Pedidos Totales</h4>
-                <h2>{format_quantity(pedidos)}</h2>
+                <h4>{format_quantity(pedidos)}</h4>
             </div>
             """,
             unsafe_allow_html=True
