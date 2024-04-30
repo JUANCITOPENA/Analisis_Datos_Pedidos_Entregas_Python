@@ -44,40 +44,37 @@ import pandas as pd
 # Configurar el diseño de la página para ser más amplio
 st.set_page_config(layout="wide")
 
-# Leer datos desde el archivo Excel
-df = pd.read_excel('Vista_Detalles_Pedidos_V1.xlsx')
-
-# Cambiar el fondo del cuerpo del documento
+# Inyectar CSS para asegurar estilos consistentes
 st.markdown(
     """
     <style>
-    /* Cambiar el fondo del cuerpo a azul oscuro */
-    body {
-        background-color: #00008B;  # Azul oscuro
-        color: white;  # Texto blanco para visibilidad sobre fondo oscuro
-        font-family: 'Helvetica', sans-serif;  # Fuente por defecto
-        margin: 0;  # Eliminar márgenes del cuerpo
-        padding: 0;  # Eliminar padding del cuerpo
-    }
-    
-    /* Alinear el contenido de los títulos y subtítulos */
-    h1, h2, h3 {
-        text-align: center;  # Centrar los títulos
+    /* Establecer un fondo y color de texto consistentes */
+    [data-testid="stAppViewContainer"] {
+        background-color: white;  /* Fondo blanco */
+        color: black;  /* Texto negro */
     }
 
-    /* Ajustes para texto general */
-    p {
-        line-height: 1.5;  # Espacio entre líneas
+    /* Establecer estilos consistentes para gráficos y tablas */
+    .stDataFrame, .stPlotlyChart {
+        background-color: white;  /* Fondo blanco para gráficos y tablas */
+        color: black;  /* Texto negro */
     }
 
-    /* Asegurar que todo el contenido esté centrado */
-    .centered {
-        text-align: center;  # Centrar el contenido
+    /* Asegurar que las tarjetas KPI tengan un estilo fijo */
+    .card_kpi {
+        background: rgba(255, 255, 255, 0.8);  /* Fondo blanco semi-transparente */
+        border-radius: 10px;  /* Bordes redondeados */
+        padding: 15px;  /* Espacio interno */
+        text-align: center;  /* Texto centrado */
+        color: black;  /* Texto negro para legibilidad */
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);  /* Sombra sutil */
     }
+
     </style>
     """,
     unsafe_allow_html=True
 )
+
 
 # Inyectar CSS para tarjetas con altura y ancho consistentes
 st.markdown(
@@ -173,6 +170,9 @@ st.markdown(
 st.markdown("<h1 style='text-align: center;'>📈 Conoce tu Negocio: Python y el Análisis de Datos en Retail 📈</h1>", unsafe_allow_html=True)
 
 
+# Leer datos desde el archivo Excel
+df = pd.read_excel('Vista_Detalles_Pedidos_V1.xlsx')
+
 # Agregar un salto de línea para separar
 st.write("")  # Esto crea un espacio adicional
 
@@ -182,8 +182,8 @@ st.markdown("<hr>", unsafe_allow_html=True)
 
 st.markdown(
     """
-    <h3 style='text-align: center; color: #4cd137;'>Creado por: Ing. Juancito Pena</h3>
-    <p style='text-align: center; color: #3498db; font-size: 16px;'>
+    <h3 style='text-align: center; color: darkblue;'>Creado por: Ing. Juancito Pena</h3>
+    <p style='text-align: center; color: darkblue; font-size: 16px;'>
         Tecnologías utilizadas: 🐍 Python, 📊 Streamlit, 🖥️ HTML/CSS, 📜 JavaScript, 📁 Git/GitHub, 
         📊 Excel, 💾 SQL Server, 🛠️ Visual Studio Code
     </p>
@@ -553,7 +553,7 @@ else:
     cantidad_pedidos_por_estado = tabla_datos_filtrada.groupby('estado')['NoPedido'].count()
 
     # Mostrar tarjetas con ingresos y cantidad de pedidos por estado
-    st.subheader("💵 Suma de Ingresos por Estado y Cantidad de Pedidos")
+    st.subheader("💵 Ingresos por Distancia y Pedidos")
 
     col1, col2, col3 = st.columns(3)
 
@@ -655,7 +655,7 @@ distribuidor_opciones = ["Todos"] + list(df['Distribuidor'].unique())
 
 # Selectbox para Estados con opción "Todos"
 estado_seleccionado = st.selectbox(
-    "Seleccione Estado",
+    "Seleccione Estado de Distancia",
     options=estado_opciones,
     index=0,  # "Todos" como selección predeterminada
     key='unique_estado'
@@ -859,7 +859,7 @@ def formato_estado(val):
     return f"color: {color};"
 
 # Mostrar el DataFrame con formato condicional
-st.subheader(f"🔝Top 10 por Estado 🏅 : {estado_seleccionado}")
+st.subheader(f"🔝Top 10 por Estado de la Distancia🏅 : {estado_seleccionado}")
 styled_table = top_10_df[
     ['NoPedido', 'Fecha pedido', 'Distribuidor', 'Producto', 'cantidad_vendida', 'Ingreso Total', 'distancia_metros', 'estado']
 ].style.applymap(formato_estado, subset=['estado'])
@@ -924,7 +924,7 @@ st.write("")  # Esto crea un espacio adicional
 st.markdown(
     """
     
-     <p style='text-align: center; color: white; font-size: 30px;'>
+     <p style='text-align: center; color: black; font-size: 30px;'>
        📤 Comparte este reporte:
     </p>
     
@@ -943,11 +943,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-
-# Agregar una línea horizontal para dividir secciones
-st.markdown("<hr>", unsafe_allow_html=True)
-###---------------------------------------------------------------------------###
 
 
     # Agregar un salto de línea para separar
@@ -1002,18 +997,13 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Agregar una línea horizontal para dividir secciones
-st.markdown("<hr>", unsafe_allow_html=True)
-###---------------------------------------------------------------------------###
-
-
 
 # Definir el estilo CSS para resaltar palabras clave y usar negrita
 css_style = """
 <style>
 .description-quien_soy {
   width: 70%; /* Ocupa el 70% del contenedor */
-  color: white; /* Texto blanco */
+  color: black; /* Texto blanco */
   background-color: transparent; /* Fondo transparente */
   text-align: center; /* Texto centrado */
   font-size: 18px; /* Tamaño de letra para los párrafos */
@@ -1025,16 +1015,18 @@ css_style = """
 .description-quien_soy h2 {
   font-size: 30px; /* Tamaño de letra más grande para h2 */
   margin-bottom: 1em; /* Espacio debajo del título */
+  color: black; /* Color verde limón fluorescente */
 }
 
 .parrafo {
   margin-bottom: 1.5em; /* Aumentar la separación entre párrafos */
   font-size: 20px; /* Tamaño de letra para los párrafos */
+  color: black; /* Color verde limón fluorescente */
 }
 
 .highlight {
   font-weight: bold; /* Texto en negrita */
-  color: lime; /* Color verde limón fluorescente */
+  color: color: black; /* Color verde limón fluorescente */; /* Color verde limón fluorescente */
 }
 </style>
 """
@@ -1115,7 +1107,7 @@ st.markdown("<hr>", unsafe_allow_html=True)
 # SECCIÓN DEL PIE DE PÁGINA
 footer_html = """
 
-   <p style='text-align: center; color: white; font-size: 20px;'>
+   <p style='text-align: center; color: black; font-size: 20px;'>
        Sígueme en mis Redes Sociales, Comparte y Comenta.
     </p>
 
