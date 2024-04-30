@@ -40,12 +40,44 @@ from folium.plugins import MarkerCluster  # Importar MarkerCluster
 import pandas as pd
 
 
+
 # Configurar el diseño de la página para ser más amplio
 st.set_page_config(layout="wide")
 
 # Leer datos desde el archivo Excel
 df = pd.read_excel('Vista_Detalles_Pedidos_V1.xlsx')
 
+# Cambiar el fondo del cuerpo del documento
+st.markdown(
+    """
+    <style>
+    /* Cambiar el fondo del cuerpo a azul oscuro */
+    body {
+        background-color: #00008B;  # Azul oscuro
+        color: white;  # Texto blanco para visibilidad sobre fondo oscuro
+        font-family: 'Helvetica', sans-serif;  # Fuente por defecto
+        margin: 0;  # Eliminar márgenes del cuerpo
+        padding: 0;  # Eliminar padding del cuerpo
+    }
+    
+    /* Alinear el contenido de los títulos y subtítulos */
+    h1, h2, h3 {
+        text-align: center;  # Centrar los títulos
+    }
+
+    /* Ajustes para texto general */
+    p {
+        line-height: 1.5;  # Espacio entre líneas
+    }
+
+    /* Asegurar que todo el contenido esté centrado */
+    .centered {
+        text-align: center;  # Centrar el contenido
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # Inyectar CSS para tarjetas con altura y ancho consistentes
 st.markdown(
