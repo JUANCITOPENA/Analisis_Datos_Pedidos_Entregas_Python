@@ -123,7 +123,19 @@ st.markdown(
 )
 
 
-
+# Imagen centrada
+st.markdown(
+    """
+    <div style='text-align: center;'>
+        <img src='https://advisertecnology.com/wp-content/uploads/2023/03/cropped-LOGO_DE_ADVISERTECNOLOGY-removebg-preview.png' 
+            alt='Logo de Advisertechnology' 
+            width='400px'  # Ajustar el tamaño de la imagen
+            style='margin-bottom: 20px;'  # Espacio entre la imagen y el siguiente contenido
+        />
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # Título y subtítulo
 st.markdown("<h1 style='text-align: center;'>📈 Conoce tu Negocio: Python y el Análisis de Datos en Retail 📈</h1>", unsafe_allow_html=True)
