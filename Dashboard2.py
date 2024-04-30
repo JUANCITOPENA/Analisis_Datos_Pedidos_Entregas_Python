@@ -173,6 +173,26 @@ st.markdown("<h1 style='text-align: center;'>📈 Conoce tu Negocio: Python y el
 # Leer datos desde el archivo Excel
 df = pd.read_excel('Vista_Detalles_Pedidos_V1.xlsx')
 
+# Paso 1: Reemplazar valores infinitos por un valor seguro para cada columna relevante
+# Nota: No uses 0 para latitudes o longitudes, ya que esto puede dar lugares incorrectos
+df['Latitud_Cliente'].replace([np.inf, -np.inf], np.nan, inplace=True)
+df['Longitud_Cliente'].replace([np.inf, -np.inf], np.nan, inplace=True)
+
+# Paso 2: Reemplazar otros NaN por valores razonables según el contexto
+# Para columnas numéricas relacionadas con dinero, puedes usar cero
+df.fillna({"Ingreso Total": 0, "cantidad_vendida": 0, "Total de Pedidos": 0}, inplace=True)
+
+# Paso 3: Eliminar filas con NaN donde se necesite información crítica
+# Por ejemplo, no queremos datos sin latitud ni longitud
+df.dropna(subset=['Latitud_Cliente', 'Longitud_Cliente'], inplace=True)
+
+# Verificar si el DataFrame todavía tiene datos
+if df.empty:
+    st.warning("El DataFrame está vacío después de la limpieza. Verifica tus datos.")
+
+
+
+
 # Agregar un salto de línea para separar
 st.write("")  # Esto crea un espacio adicional
 
@@ -630,9 +650,13 @@ else:
  
  
  
+ 
+ 
+ 
+ 
  # ININICIO SECCION MAPA INTERACTIVO POR ENTREGAS Y ESTADOS. CLUSTER DINAMICO Y TOOLTIPS
     
-# Seccion del Mapa":
+# Sección del Mapa
 # Agregar CSS para centrar el contenido
 st.markdown(
     """
@@ -643,11 +667,26 @@ st.markdown(
         align-items: center;
         height: 100%;
     }
+
+    /* Aumentar el z-index para el mapa y los tooltips */
+    .folium-map {
+        z-index: 100;  /* Asegurar prioridad del mapa */
+    }
+
+    /* Asegurar que los tooltips tengan prioridad sobre otros elementos */
+    .folium-tooltip {
+        z-index: 1000;  /* Mayor prioridad para los tooltips */
+    }
+
+    /* Asegurarse de que no haya opacidad ni superposición */
+    .some-class {
+        opacity: 1;  /* Evitar cualquier opacidad no deseada */
+        z-index: 10;  /* Ajustar el z-index para asegurar visibilidad */
+    }
     </style>
     """,
     unsafe_allow_html=True
 )
-
 
 # Agregar "Todos" a las listas de opciones
 estado_opciones = ["Todos"] + list(df['estado'].unique())
@@ -685,7 +724,6 @@ filtered_df = df[
     (df['estado'].isin(estados_filtrados)) &
     (df['Distribuidor'].isin(distribuidores_filtrados))
 ]
-
 
 
 
@@ -730,6 +768,11 @@ st_folium(mapa, width=1500, height=600, key='unique_mapa')  # Puedes cambiar el 
 st.markdown("</div>", unsafe_allow_html=True)
 
  # FIN  SECCION MAPA INTERACTIVO POR ENTREGAS Y ESTADOS. CLUSTER DINAMICO Y TOOLTIPS
+
+
+
+
+
 
 
 ###---------------------------------------------------------------------------###
@@ -955,41 +998,67 @@ st.write("")  # Esto crea un espacio adicional
 st.markdown(
     """
     <style>
-    @keyframes rotating-border {
+    /* Animación para el borde circular con gradiente cónico y movimiento fluido */
+    @keyframes waterFlow {
         0% {
-            background: conic-gradient(red, blue, white, yellow,green);
+            background-position: 100% 0; /* Posición inicial */
         }
         100% {
-            background: conic-gradient(blue,green, white, yellow, red);
+            background-position: -100% 0; /* Movimiento del fondo para crear el efecto de flujo */
+        }
+    }y
+
+    /* Animación para el efecto de latido */
+    @keyframes heartbeat {
+        0% {
+            transform: scale(1); /* Escala normal */
+        }
+        50% {
+            transform: scale(1.05); /* Expansión para simular latido */
+        }
+        100% {
+            transform: scale(1); /* Regreso a escala normal */
         }
     }
 
+    /* Estilo para centrar el contenido */
     .centered {
         display: flex;
         justify-content: center;
         align-items: center;
-        padding-top: 50px;  # Puedes ajustar esto para subir o bajar el margen
-        padding-bottom: 50px;  # Y esto para cambiar el margen inferior
+        padding-top: 50px; /* Margen superior ajustable */
+        padding-bottom: 50px; /* Margen inferior ajustable */
     }
 
-    .circular-image {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        overflow: hidden;
-        border: 8px solid transparent;
-        background: conic-gradient(red, blue, white, yellow);
-        animation: rotating-border 4s linear infinite;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    /* Aplicación de animaciones y bordes al contenedor circular */
+    .profile-image {
+        width: 200px; /* Tamaño del contenedor */
+        height: 200px; /* Tamaño del contenedor */
+        border-radius: 50%; /* Forma circular */
+        overflow: hidden; /* Para evitar desbordamientos */
+        border: 8px solid transparent; /* Borde transparente para espacio del gradiente */
+        background: conic-gradient(
+            from 0deg,
+            red 0%, 
+            blue 25%, 
+            green 50%, 
+            yellow 75%, 
+            rgb(231, 199, 231) 100%
+        ); /* Gradiente cónico con cinco colores */
+        animation: waterFlow 6s infinite linear, heartbeat 3s infinite; /* Animaciones de flujo y latido */
+        background-size: 400% 100%; /* Permite movimiento fluido del gradiente */
+        background-position: 100% 0; /* Posición inicial para el efecto de flujo */
+        clip-path: circle(); /* Mantener forma circular, prevenir bordes extraños */
     }
 
-    .circular-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+    /* Estilo para la imagen dentro del contenedor circular */
+    .profile-image img {
+        width: 100%; /* Imagen cubre todo el contenedor */
+        height: 100%; /* Imagen cubre todo el contenedor */
+        object-fit: cover; /* Ajuste para que la imagen no se deforme */
+        border-radius: 50%; /* Mantener la forma circular */
     }
+
     </style>
     
    
@@ -1039,12 +1108,13 @@ description_html = """
 <div class="description-quien_soy">
   <h2>🤔 ¿Quién Soy? 🇩🇴</h2>
   
- <div class='centered'>
-        <div class='circular-image'>
-            <img src='https://juancitopena.github.io/PORTAFOLIO_WEB_JPV/imagenes/Juancito-transp.png' alt='Descripción de la imagen' />
-        </div>
-    </div>
-    <br>
+  
+  
+  <div class="centered">
+    <img src="https://avatars.githubusercontent.com/u/38921558?v=4" class="profile-image" alt="Tu Fotografía">
+  </div>
+
+
   <p class="parrafo">
     🙋 ¡Hola! Mi nombre es <span class="highlight">Juancito Peña V.</span>   💻. Soy un entusiasta del 📊 análisis de datos, las tecnologías, y la programación 💻,
     con más de 15 años de experiencia trabajando, educando, aprendiendo e innovando en sistemas orientados a procesos tecnológicos,
