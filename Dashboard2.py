@@ -126,9 +126,30 @@ st.markdown(
 
 
 # Título y subtítulo
-st.markdown("<h1 style='text-align: center;'>📊 Análisis de Datos de Pedidos y Entregas con Python 📊</h1>", unsafe_allow_html=True)
-st.markdown("<h3 style='text-align: center; color: #4cd137;'>Creado por: Ing. Juancito Pena</h3>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>📈 Conoce tu Negocio: Python y el Análisis de Datos en Retail 📈</h1>", unsafe_allow_html=True)
 
+
+# Agregar un salto de línea para separar
+st.write("")  # Esto crea un espacio adicional
+
+# Agregar una línea horizontal para dividir secciones
+st.markdown("<hr>", unsafe_allow_html=True)
+###---------------------------------------------------------------------------###
+
+st.markdown(
+    """
+    <h3 style='text-align: center; color: #4cd137;'>Creado por: Ing. Juancito Pena</h3>
+    <p style='text-align: center; color: #3498db; font-size: 16px;'>
+        Tecnologías utilizadas: 🐍 Python, 📊 Streamlit, 🖥️ HTML/CSS, 📜 JavaScript, 📁 Git/GitHub, 
+        📊 Excel, 💾 SQL Server, 🛠️ Visual Studio Code
+    </p>
+    """,
+    unsafe_allow_html=True
+)
+
+# Agregar una línea horizontal para dividir secciones
+st.markdown("<hr>", unsafe_allow_html=True)
+###---------------------------------------------------------------------------###
 
 # Calcular las sumas totales para las tarjetas
 suma_total_pedidos = df["Total de Pedidos"].sum()
@@ -555,7 +576,15 @@ else:
  
  # FIN SECCION TARJETAS O CARD POR ESTADO Y Segmentador por estado
  
+ 
+ 
+ 
+ 
  ###_-----------------------------------------------------------------####
+ 
+ 
+ 
+ 
  
  # ININICIO SECCION MAPA INTERACTIVO POR ENTREGAS Y ESTADOS. CLUSTER DINAMICO Y TOOLTIPS
     
@@ -614,9 +643,7 @@ filtered_df = df[
 ]
 
 
-# Crear el mapa con Folium y agregar un MarkerCluster para mejorar el rendimiento
-import folium
-from folium.plugins import MarkerCluster  # Importa el MarkerCluster
+
 
 # Configurar el mapa
 mapa = folium.Map(location=[18.486057, -69.931212], zoom_start=12)
@@ -841,18 +868,241 @@ st.plotly_chart(fig, use_container_width=True)
 
 # FIN DE TABLA.
 
+
+
+
+    # Agregar un salto de línea para separar
+st.write("")  # Esto crea un espacio adicional
+
 ###---------------------------------------------------------------------------###
 
-# SECCION DEL PIE DE PAGINAS
-footer_html = """
-<div style='text-align: center; color: lime; font-size: 18px; font-weight: bold;'>
-  <br>
-  <a href='https://www.youtube.com/@JuancitoPenaV' target='_blank' style='font-size: 18px;'>🔴 YouTube</a> | 
-  <a href='https://www.linkedin.com/in/juancitope%C3%B1a/' target='_blank' style='font-size: 18px;'>🔵 LinkedIn</a> | 
-  <a href='https://github.com/JUANCITOPENA/Analisis_Datos_Pedidos_Entregas_Python' target='_blank' style='font-size: 18px;'>⚫ GitHub</a>
-  <br><br>
-  <h3>© 2023 Advisertecnology - Todos los derechos reservados | <a href='https://advisertecnology.com/' target='_blank'>www.advisertecnology.com</a></h3>
+
+st.markdown(
+    """
+    
+     <p style='text-align: center; color: white; font-size: 30px;'>
+       📤 Comparte este reporte:
+    </p>
+    
+    <div style='text-align: center;'>
+        <a href='https://twitter.com/intent/tweet?text=¡Mira%20este%20reporte!&url=https%3A%2F%2Fexample.com' target='_blank'>
+            <img src='https://img.icons8.com/color/48/000000/twitter.png' alt='Twitter' />
+        </a>
+        <a href='https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fexample.com' target='_blank'>
+            <img src='https://img.icons8.com/color/48/000000/facebook-new.png' alt='Facebook' />
+        </a>
+        <a href='https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fexample.com' target='_blank'>
+            <img src='https://img.icons8.com/color/48/000000/linkedin.png' alt='LinkedIn' />
+        </a>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
+
+# Agregar una línea horizontal para dividir secciones
+st.markdown("<hr>", unsafe_allow_html=True)
+###---------------------------------------------------------------------------###
+
+
+    # Agregar un salto de línea para separar
+st.write("")  # Esto crea un espacio adicional
+
+
+
+
+
+st.markdown(
+    """
+    <style>
+    @keyframes rotating-border {
+        0% {
+            background: conic-gradient(red, blue, white, yellow,green);
+        }
+        100% {
+            background: conic-gradient(blue,green, white, yellow, red);
+        }
+    }
+
+    .centered {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-top: 50px;  # Puedes ajustar esto para subir o bajar el margen
+        padding-bottom: 50px;  # Y esto para cambiar el margen inferior
+    }
+
+    .circular-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 8px solid transparent;
+        background: conic-gradient(red, blue, white, yellow);
+        animation: rotating-border 4s linear infinite;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .circular-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    </style>
+    
+   
+    """,
+    unsafe_allow_html=True
+)
+
+# Agregar una línea horizontal para dividir secciones
+st.markdown("<hr>", unsafe_allow_html=True)
+###---------------------------------------------------------------------------###
+
+
+
+# Definir el estilo CSS para resaltar palabras clave y usar negrita
+css_style = """
+<style>
+.description-quien_soy {
+  width: 70%; /* Ocupa el 70% del contenedor */
+  color: white; /* Texto blanco */
+  background-color: transparent; /* Fondo transparente */
+  text-align: center; /* Texto centrado */
+  font-size: 18px; /* Tamaño de letra para los párrafos */
+  line-height: 1.6; /* Espacio entre líneas para mejorar la legibilidad */
+  margin: 0 auto; /* Centrar horizontalmente dentro del contenedor */
+  padding: 20px; /* Añadir espacio alrededor del contenido */
+}
+
+.description-quien_soy h2 {
+  font-size: 30px; /* Tamaño de letra más grande para h2 */
+  margin-bottom: 1em; /* Espacio debajo del título */
+}
+
+.parrafo {
+  margin-bottom: 1.5em; /* Aumentar la separación entre párrafos */
+  font-size: 20px; /* Tamaño de letra para los párrafos */
+}
+
+.highlight {
+  font-weight: bold; /* Texto en negrita */
+  color: lime; /* Color verde limón fluorescente */
+}
+</style>
+"""
+
+# Aplicar el estilo CSS
+st.markdown(css_style, unsafe_allow_html=True)
+
+# Sección de descripción personal
+description_html = """
+<div class="description-quien_soy">
+  <h2>🤔 ¿Quién Soy? 🇩🇴</h2>
+  
+ <div class='centered'>
+        <div class='circular-image'>
+            <img src='https://juancitopena.github.io/PORTAFOLIO_WEB_JPV/imagenes/Juancito-transp.png' alt='Descripción de la imagen' />
+        </div>
+    </div>
+    <br>
+  <p class="parrafo">
+    🙋 ¡Hola! Mi nombre es <span class="highlight">Juancito Peña V.</span>   💻. Soy un entusiasta del 📊 análisis de datos, las tecnologías, y la programación 💻,
+    con más de 15 años de experiencia trabajando, educando, aprendiendo e innovando en sistemas orientados a procesos tecnológicos,
+    administrativos, productivos y de marketing. Creo en el poder de la tecnología para mejorar la productividad 🚀, los
+    negocios 💼 y la educación 🎓.
+  </p>
+
+  <p class="parrafo">
+    🎓 Mi formación académica incluye un título en <span class="highlight">Ingeniería en Sistemas y Computación</span> 🎓, una especialidad en <span class="highlight">Desarrollo
+    de Software</span> 🛠️, y una maestría en <span class="highlight">Sistemas con mención Gerencial</span>. Recientemente, he iniciado una nueva maestría en
+    <span class="highlight">Ciencia de Datos para Negocios (Big Data & Business Analytics)</span> en CEUPE - Centro Europeo de Postgrado CEUPE/CESUMA 📚.
+  </p>
+
+  <p class="parrafo">
+   🧬 Mis habilidades técnicas incluyen el uso avanzado de herramientas de Business Intelligence como: <span class="highlight">Excel 📊</span>, 
+    <span class="highlight">SQL Server 💾</span>, <span class="highlight">Power BI</span>, <span class="highlight">Python</span> 🐍, y Crystal Reports 📊, 
+    así como otras herramientas de Desarollo de Software como:  <span class="highlight"> Xamarin, .NET MAUI, C#, .NET Framework</span>, <span class="highlight">HTML</span>, <span class="highlight">CSS</span>, <span class="highlight">JavaScript, Python, PHP, 
+    Wordpress, Balsamiq y Figma.</span> y otras herramientas y  Software ERP como: <span class="highlight">SAP HANA,
+    Mseller App, Macola, EasySales</span>
+  </p>
+
+  <p class="parrafo">
+    👷 He trabajado en implementaciones de software 💻, aplicaciones móviles para ventas 📱, almacén, distribución 🚚, así
+    como en la creación y generación de reportes 📑, informes 📃, y dashboards para Business Intelligence, con el fin 
+    de mejorar la toma de decisiones 🎯 en la empresa.  Desde el planteamiento del problema hasta el lanzamiento, 
+    abarcando actividades como 📏 prototipado, 🔍 testing y 🧪 QA, hasta la documentación 📄 y la capacitación del personal 🧑‍🏫
+  </p>
+  
+<p class="parrafo">
+    🫡 Soy un guerrero en el mundo laboral, un ejemplo de resiliencia y determinación. Vengo de una familia humilde, 
+    con escasos recursos, y he enfrentado mil ⚔️ batallas para llegar a donde estoy. He 🤕 caído muchas veces, pero me he 💪 levantado 
+    mil y una, siempre con más fuerza y 🏃 determinación. Amo lo que hago ❤️, y esa pasión me impulsa a seguir adelante incluso
+    cuando el camino es difícil.
+</p>
+
+<p class="parrafo">
+    🤔 Si crees que te puedo ayudar con tus proyectos, no dudes en contactarme a través de mis redes sociales 📱,
+    mi correo 📧, o por WhatsApp 💬. Estoy aquí para ayudarte a lograr tus objetivos y a superar cualquier desafío.
+</p>
+
+
+
+
+
+  
 </div>
+"""
+
+st.markdown(description_html, unsafe_allow_html=True)
+
+# Fin de la sección de descripción personal
+
+# FIN SECCIÓN DE DESCRIPCIÓN PERSONAL
+
+# Agregar una línea horizontal para dividir secciones
+st.markdown("<hr>", unsafe_allow_html=True)
+###---------------------------------------------------------------------------###
+
+
+# SECCIÓN DEL PIE DE PÁGINA
+footer_html = """
+
+   <p style='text-align: center; color: white; font-size: 20px;'>
+       Sígueme en mis Redes Sociales, Comparte y Comenta.
+    </p>
+
+    <div style='text-align: center; font-size: 18px; font-weight: bold;'>
+      <br>
+      <a href='https://www.youtube.com/@JuancitoPenaV' target='_blank' style='font-size: 18px;'>
+        <img src='https://img.icons8.com/color/48/000000/youtube-play.png' alt='YouTube' width='24' /> YouTube
+      </a> | 
+      <a href='https://www.linkedin.com/in/juancitope%C3%B1a/' target='_blank' style='font-size: 18px;'>
+        <img src='https://img.icons8.com/color/48/000000/linkedin-circled.png' alt='LinkedIn' width='24' /> LinkedIn
+      </a> | 
+      <a href='https://github.com/JUANCITOPENA/Analisis_Datos_Pedidos_Entregas_Python' target='_blank' style='font-size: 18px;'>
+        <img src='https://img.icons8.com/material-rounded/48/4A90E2/github.png' alt='GitHub' width='24' /> GitHub
+      </a> |
+      <a href='https://www.instagram.com/' target='_blank' style='font-size: 18px;'>
+        <img src='https://img.icons8.com/fluency/48/000000/instagram-new.png' alt='Instagram' width='24' /> Instagram
+      </a> | 
+      <a href='https://www.facebook.com/' target='_blank' style='font-size: 18px;'>
+        <img src='https://img.icons8.com/color/48/000000/facebook-new.png' alt='Facebook' width='24' /> Facebook
+      </a> | 
+      <a href='https://chat.whatsapp.com/GrzUtfJXvTDFPW1jSa3NWR' target='_blank' style='font-size: 18px;'>
+        <img src='https://img.icons8.com/color/48/000000/whatsapp.png' alt='WhatsApp' width='24' /> WhatsApp
+      </a> |
+      <a href='mailto:juancito.pena@gmail.com' target='_blank' style='font-size: 18px;'>
+        <img src='https://cdn.icon-icons.com/icons2/1826/PNG/48/4202011emailgmaillogomailsocialsocialmedia-115677_115624.png' alt='Correo Electrónico' width='24' /> Correo Electrónico
+      </a>
+      <br><br>
+      <h3>© 2023 Advisertecnology - Todos los derechos reservados | 
+        <a href='https://advisertecnology.com/' target='_blank' style='font-size: 18px; color: lime;'>www.advisertecnology.com</a>
+      </h3>
+    </div>
 """
 
 st.markdown(footer_html, unsafe_allow_html=True)
