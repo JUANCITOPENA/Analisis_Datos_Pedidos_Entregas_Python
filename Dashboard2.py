@@ -166,9 +166,22 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Título y subtítulo
-st.markdown("<h1 style='text-align: center;'>📈 Conoce tu Negocio: Python y el Análisis de Datos en Retail 📈</h1>", unsafe_allow_html=True)
-
+# Crear un título centrado con alto contraste para cambios de temas
+st.markdown(
+    """
+    <h1 style='
+        text-align: center; 
+        color: darkblue;  /* darkblue para alto contraste */
+        text-shadow: 2px 2px 4px #000000;  /* Sombra negra para mayor legibilidad */
+        padding: 10px;  /* Espacio interno para destacar el título */
+        background: rgba(0, 0, 0, 0.5);  /* Fondo oscuro con transparencia */
+        border-radius: 10px;  /* Bordes redondeados para estilo */
+    '>
+        📈 Conoce tu Negocio: Python y el Análisis de Datos en Retail 📈
+    </h1>
+    """,
+    unsafe_allow_html=True
+)
 
 # Leer datos desde el archivo Excel
 df = pd.read_excel('Vista_Detalles_Pedidos_V1.xlsx')
@@ -340,7 +353,8 @@ with col2:
     
     
 
-# Sección 3: Gráfico Circular por Estado y Gráfico de Líneas por Fecha
+# SECCION # 3: GRAFICO CIRCULAR POR ESTADO DE ENTREGA Y GRAFICO DE LINEAS POR FECHA.
+
 col5, col6 = st.columns(2)
 
 with col5:
@@ -359,18 +373,23 @@ with col5:
     ax.set_facecolor('none')  # Fondo del eje
     
     estados_unicos = sorted(filtered_df['estado'].unique(), key=lambda x: estado_colores[x])
+  
+  
     
-  # Graficar el gráfico circular con colores condicionales y etiquetas blancas
+  # Graficar el gráfico circular con colores condicionales y etiquetas blancas:
+  
     filtered_df.groupby("estado")["Ingreso Total"].sum().plot.pie(
         autopct=lambda p: f'{p:.1f}%',
         colors=[estado_colores[e] for e in estados_unicos],
         ax=ax,
-        textprops={'color': 'white'},  # Configuración de texto blanco
+        textprops={'color': 'black'},  # Configuración de texto blanco
         startangle=90
     )
+    
+
     st.pyplot(fig)
     
-  # Grafica de lineas
+  # FIN SECCION 3 CON GRAFICO CIRCULAR Y Grafica de lineas
   
 with col6:
     st.subheader("📅 Ingreso por Fecha")
@@ -475,6 +494,54 @@ for idx, periodo in enumerate(ingresos_por_periodo.index):
 
 
 
+
+
+
+
+# Supongamos que 'df' es tu DataFrame con los datos existentes
+df = pd.read_excel('Vista_Detalles_Pedidos_V1.xlsx')
+
+# Colores para cada estado
+estado_colores = {
+    "Entrega Exacta en Lugar": "green",
+    "Dentro del Rango de 30 Metros": "yellow",
+    "Fuera del Rango de 30 Metros": "red"
+}
+
+# Crear el gráfico de área para los ingresos
+fig = px.area(
+    df,
+    x='Fecha pedido',  # Eje X
+    y='Ingreso Total',  # Eje Y
+    color='estado',  # Para colores según estado
+    labels={"Fecha pedido": "Fecha", "Ingreso Total": "Ingresos ($)"},  # Etiquetas
+    title="Ingresos por Fecha y Estado",  # Título del gráfico
+    color_discrete_map=estado_colores,  # Mapear colores personalizados
+    hover_data=['Distribuidor'],  # Datos para mostrar en hover
+    line_shape='linear'  # Forma de las líneas
+)
+
+# Ajustar el diseño del gráfico
+fig.update_layout(
+    legend=dict(
+        orientation='h',  # Leyenda horizontal
+        xanchor='center',
+        x=0.5,
+        y=1.05
+    ),
+    plot_bgcolor='white',  # Fondo blanco
+    showlegend=True
+)
+
+# Mostrar el gráfico en Streamlit
+st.plotly_chart(fig, use_container_width=True)
+
+
+
+
+
+
+
 # INCIIO SECCION GRAFICO POR PERIODOS:
 
 # Asegurarse de que la columna de fechas sea de tipo datetime
@@ -533,6 +600,16 @@ st.plotly_chart(fig, use_container_width=True)
 # FIN SECCION GRAFICO POR PERIODOS:
 
 
+
+
+
+
+
+
+
+
+
+
 ###_-----------------------------------------------------------------####
 
 # SECCION TARJETAS O CARD POR ESTADO Y Segmentador por estado
@@ -543,8 +620,6 @@ estado_colores = {
     "Dentro del Rango de 30 Metros": "orange",
     "Fuera del Rango de 30 Metros": "red"
 }
-
-
 
 # Define formato para valores monetarios
 def format_currency(value):
@@ -769,15 +844,101 @@ st.markdown("</div>", unsafe_allow_html=True)
 
  # FIN  SECCION MAPA INTERACTIVO POR ENTREGAS Y ESTADOS. CLUSTER DINAMICO Y TOOLTIPS
 
+###---------------------------------------------------------------------------###
 
 
 
+
+
+
+# Definir colores por estado
+estado_colores = {
+    "Entrega Exacta en Lugar": "green",
+    "Dentro del Rango de 30 Metros": "yellow",
+    "Fuera del Rango de 30 Metros": "red"
+}
+
+# Leer datos desde el archivo Excel
+df = pd.read_excel("Vista_Detalles_Pedidos_V1.xlsx")
+
+# Agrupar por distribuidor y estado
+df_grouped = df.groupby(["Distribuidor", "estado"]).agg(
+    {
+        "Ingreso Total": "sum",  # Sumar ingresos por distribuidor y estado
+        "cantidad_vendida": "sum"  # Sumar cantidades por distribuidor y estado
+    }
+).reset_index()
+
+# Agregar texto para mostrar ingresos dentro de las barras
+df_grouped['Ingresos Texto'] = df_grouped['Ingreso Total'].apply(lambda x: f"${x:,.2f}")
+
+# Verificar si las columnas adicionales existen y agregar al grupo y al hover_data
+hover_data = ["cantidad_vendida", "estado"]  # Información para tooltips
+
+if "Cliente" in df.columns:
+    df_grouped["Cliente"] = df["Cliente"]
+    hover_data.append("Cliente")
+
+if "Vendedor" in df.columns:
+    df_grouped["Vendedor"] = df["Vendedor"]
+    hover_data.append("Vendedor")
+
+if "Sector" in df.columns:
+    df_grouped["Sector"] = df["Sector"]
+    hover_data.append("Sector")
+
+if "Producto" in df.columns:
+    df_grouped["Producto"] = df["Producto"]
+    hover_data.append("Producto")
+
+# Crear el gráfico de barras con texto dentro de las barras
+fig_ingresos = px.bar(
+    df_grouped,
+    x='Distribuidor',  # Eje X
+    y='Ingreso Total',  # Eje Y
+    color='estado',  # Color por estado
+    color_discrete_map=estado_colores,  # Colores personalizados
+    hover_data=hover_data,  # Datos adicionales para tooltips
+    text='Ingresos Texto',  # Texto para mostrar dentro de las barras
+    labels={"Ingreso Total": "Ingresos ($)", "Distribuidor": "Distribuidor"},
+    title="💵 Ingresos por Distribuidor y Estado 📊"
+)
+
+# Ajustar la posición del texto y el estilo
+fig_ingresos.update_traces(
+    textposition='inside',  # Texto dentro de las barras
+    textfont=dict(size=10, color='black')  # Tamaño y color del texto para legibilidad
+)
+
+# Ajustar la posición de la leyenda y el fondo del gráfico
+fig_ingresos.update_layout(
+    legend=dict(
+        orientation='h',  # Leyenda horizontal
+        xanchor='center',  # Centrar la leyenda horizontalmente
+        x=0.5,  # Centrar la leyenda horizontalmente
+        yanchor='bottom',  # Anclar la leyenda desde la parte inferior
+        y=-0.8,  # Mover la leyenda hacia abajo (separar del gráfico)
+    ), 
+     title=dict(
+        text="💵 Ingresos por Distribuidor y Estado 📊",  # Texto del título
+        font=dict(size=25),  # Tamaño del texto
+        x=0,  # Posición a la izquierda
+        xanchor='left',  # Anclar a la izquierda
+    ),
+    
+    showlegend=True,  # Mostrar la leyenda
+    plot_bgcolor='white'  # Fondo blanco para el gráfico
+)
+
+
+# Mostrar el gráfico en Streamlit
+st.plotly_chart(fig_ingresos, use_container_width=True)
 
 
 
 ###---------------------------------------------------------------------------###
 
-# INICIOS DE SECCOPM DE LOS GRAFICOS ADICIONALES DE ENTREGA POR DISTANCIA:
+# INICIOS DE SECCION DE LOS GRAFICOS ADICIONALES DE ENTREGA POR DISTANCIA:
 
 # CSS para centrar el contenido
 st.markdown(
@@ -793,8 +954,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Sección para gráficos con dos columnas
-st.subheader("📊 Gráficos Adicionales 📊")
 
 col1, col2 = st.columns(2)
 
